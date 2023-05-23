@@ -6,6 +6,7 @@ import {images} from '../images'
 import {useAppDispatch, useAppSelector} from "../redux/store";
 import {addImage} from "../redux/imagesSlice";
 import { useRouter } from 'next/navigation'
+import {ImageCard} from "./ImageCard";
 
 const TestPage= () => {
     const dispatch = useAppDispatch()
@@ -32,7 +33,7 @@ const TestPage= () => {
 
             <Flex width={'100%'} mt={'100px'}>
                 {imagesFromStore.map(image =>
-                    <Image width={'250px'} height={'350px'} onClick={() => modalHandler(image)} src={image.image} key={image.id} alt={'img'}/>
+                    <ImageCard resultImage={image} modalHandler={() => modalHandler(image)}/>
                 )}
             </Flex>
             <span>click images to open modal</span>
