@@ -7,15 +7,28 @@ import {useAppDispatch, useAppSelector} from "../redux/store";
 import {addImage} from "../redux/imagesSlice";
 import { useRouter } from 'next/navigation'
 import {ImageCard} from "./ImageCard";
+import {ResultImage} from "../types";
+import FullScreenImage from "./FullScreenImage";
 
 const TestPage= () => {
     const dispatch = useAppDispatch()
     const { isOpen, onClose, onOpen } = useDisclosure()
     const [reduxImage, setReduxImage] = useState('');
-    const imagesFromStore = useAppSelector((state) => state.images);
+    const [imageId, setImageId] = useState(undefined);
+    const [openCard, setOpenCard] = useState<string | undefined>(undefined)
+
+    const imagesFromStore = useAppSelector((state) => state.images.value);
 
     const imageHandler = (image: any) => {
         dispatch(addImage({id: image.id, image: image.image}))
+    }
+
+    const handleOpen = (id: string) => {
+        setOpenCard(id)
+    }
+
+    const handleClose = () => {
+        setOpenCard(undefined)
     }
 
     const modalHandler = (image: any) => {
@@ -33,17 +46,16 @@ const TestPage= () => {
 
             <Flex width={'100%'} mt={'100px'}>
                 {imagesFromStore.map(image =>
-                    <ImageCard resultImage={image} modalHandler={() => modalHandler(image)}/>
+                    <ImageCard resultImage={image} modalHandler={() => handleOpen(image.id)} key={image.id}/>
                 )}
             </Flex>
             <span>click images to open modal</span>
-            {
-                <Modal isOpen={isOpen} onClose={onClose}>
-                    <ModalContent >
-                        <Image src={reduxImage} key={1} alt={'reduximg'} fill={'auto'}/>
-                    </ModalContent>
-                </Modal>
-            }
+            <FullScreenImage
+                currentGuid={imageId}
+                isOpen={!!openCard}
+                selector={state => state.images.value}
+                handleClose={handleClose}
+            />
         </Flex>
     );
 };

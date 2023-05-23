@@ -2,18 +2,25 @@ import {Flex, Grid, Image, interactivity} from '@chakra-ui/react'
 import React, { useState } from 'react'
 import {useAppSelector} from "../redux/store";
 import {useBreakPoint} from "../useBreakPoint";
+import {ResultImage} from "../types";
+import {ImageButtonsDrawer} from "./ImageButtonsDrawer";
+import {ShareImageModal} from "./ShareImageModal";
 
-
+export type CardHandlers = {
+    handleLike: (image: ResultImage) => Promise<void>
+    handleShare: (image: ResultImage) => Promise<string>
+    handleFind: (image: ResultImage) => Promise<void>
+    handleDelete: (guid: string) => void
+}
 interface ImageCardProps {
-    resultImage: {
-        id: string;
-        image: string;
-    },
-    modalHandler: (resultImage: { id: string; image: string }) => void;
+    resultImage: ResultImage
+    modalHandler: (resultImage: ResultImage) => void;
+    handlers?: CardHandlers
 }
 
+
 export const ImageCard = React.memo(
-    ({resultImage, modalHandler}: ImageCardProps ) => {
+    ({resultImage, modalHandler,  handlers}: ImageCardProps ) => {
         const { id, image } = resultImage
 
         const isMobile = useBreakPoint({ base: true, md: false })
@@ -30,10 +37,6 @@ export const ImageCard = React.memo(
             modalHandler(resultImage)
         }
 
-        const handleSpread = () => {
-            if (!isMobile) return
-            setDrawerVisible(!drawerVisible)
-        }
 
         return (
             <>
@@ -58,6 +61,13 @@ export const ImageCard = React.memo(
                         onClick={onOpen}
                         decoding={'async'}
                     />
+                    {drawerVisible && isMobile && (
+                        <ImageButtonsDrawer
+                            downloadUrl={image}
+                            drawerVisible
+                        />
+                    )}
+                    {<ShareImageModal isOpen={!!shareModal} shareUrl={shareModal ?? ''} onClose={() => setShareModal(null)} />}
                 </Grid>
 
             </>

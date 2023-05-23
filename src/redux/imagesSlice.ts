@@ -1,21 +1,22 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit'
+import {ResultImage} from "../types";
 
-interface Image {
-    id: string;
-    image: string;
+export interface ResultPromptState {
+    value: ResultImage[]
 }
-
-const initialState: Image[] = []
+const initialState: ResultPromptState = {
+    value: []
+}
 
 const imagesSlice = createSlice({
     name: 'images',
     initialState,
     reducers: {
-        addImage(state, action: PayloadAction<Image>) {
-            state.push(action.payload);
+        addImage(state, action: PayloadAction<ResultImage>) {
+            state.value.push(action.payload);
         },
-        getImages(state, action: PayloadAction<Image[]>) {
-            return action.payload
+        getImages(state, action: PayloadAction<ResultImage[]>) {
+            state.value = action.payload
         }
     }
 })
